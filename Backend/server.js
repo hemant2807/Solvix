@@ -2,6 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const userRoutes = require("./routes/userRoutes");
+const submissionRoutes = require("./routes/submissionRoutes"); 
+const sessionRoutes = require("./routes/sessionRoutes"); 
 
 const app = express();
 
@@ -19,6 +22,11 @@ if (!MONGO_URI) {
 mongoose.connect(MONGO_URI)
   .then(() => console.log("......MongoDB connected........."))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+//routes
+app.use("/api/users", userRoutes);
+app.use("/api/submissions", submissionRoutes); 
+app.use("/api/sessions", sessionRoutes); 
 
 // Basic health check route
 app.get("/", (req, res) => {
