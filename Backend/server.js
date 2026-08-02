@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const submissionRoutes = require("./routes/submissionRoutes"); 
 const sessionRoutes = require("./routes/sessionRoutes"); 
+const githubRoutes = require("./routes/githubRoutes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ mongoose.connect(MONGO_URI)
 app.use("/api/users", userRoutes);
 app.use("/api/submissions", submissionRoutes); 
 app.use("/api/sessions", sessionRoutes); 
+app.use("/api/github", githubRoutes);
 
 // ==========================================
 // AI CONFIGURATION & HELPERS
