@@ -7,6 +7,10 @@ const submissionRoutes = require("./routes/submissionRoutes");
 const sessionRoutes = require("./routes/sessionRoutes"); 
 const githubRoutes = require("./routes/githubRoutes");
 
+const { initializeReminderScheduler } = require("./services/reminderScheduler");
+const { scheduleMonthlyDigest } = require("./services/monthlyDigestScheduler");
+const { initializeDailyReportScheduler } = require("./services/dailyReportScheduler");
+
 const app = express();
 
 // Middleware
@@ -23,6 +27,16 @@ if (!MONGO_URI) {
 mongoose.connect(MONGO_URI)
   .then(() => console.log("......MongoDB connected........."))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+if (process.env.ENABLE_SCHEDULERS !== "false") {
+  try {
+    initializeReminderScheduler();
+    scheduleMonthlyDigest();
+    initializeDailyReportScheduler();
+  } catch (schedulerError) {
+    console.error("Failed to initialize schedulers:", schedulerError);
+  }
+}
 
 //routes
 app.use("/api/users", userRoutes);
