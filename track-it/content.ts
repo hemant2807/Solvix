@@ -1,6 +1,6 @@
 import "./style.css"
 import type { PlasmoCSConfig } from "plasmo"
-// import { mountHelpButton } from "./components/HelpButtonMount" // TODO: Add in future commit
+import { mountHelpButton } from "./components/HelpButtonMount" // TODO: Add in future commit
 declare const chrome: any;
 
 export const config: PlasmoCSConfig = {
@@ -115,7 +115,7 @@ function injectHelpButton() {
 
     saveBtn.insertAdjacentElement("afterend", mountPoint)
 
-    // mountHelpButton(mountPoint) // TODO: Add in future commit
+    mountHelpButton(mountPoint) // TODO: Add in future commit
   }
 }
 
