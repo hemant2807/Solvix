@@ -9,6 +9,14 @@ import { ChatInput } from "./components/ChatInput"
 type AITabProps = {
   description: string
   code: string
+  // The parent (sidepanel) tracks the current problem's slug from the
+  // passive QUESTION_INFO broadcast, which arrives as soon as the page loads
+  // - well before the user opens this tab. Accepting it as a prop lets us
+  // seed pageContext.slug immediately on mount instead of waiting on this
+  // component's own async GET_CONTEXT round-trip, closing the race window
+  // where a message sent right after opening the AI tab could be saved
+  // under a slug-less (title-only) key while a later reload uses the
+  // now-known slug key, making the chat appear to "disappear".
   slug?: string
 }
 
@@ -27,10 +35,18 @@ export default function AITab({ description: propDescription, code: propCode, sl
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  // Auto-scroll to the latest message as the conversation grows or streams in.
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, isLoading])
 
+  // Generate a storage key for chat history for the current problem. Prefer
+  // the LeetCode slug when we have one - it's a stable, collision-free
+  // identifier - unlike the title, which can be empty/generic ("Active
+  // Problem") for a moment before the content script responds, or which two
+  // different problems could theoretically share once sanitized. Falling
+  // back to the sanitized title keeps existing stored chats (saved before
+  // slug tracking existed) readable.
   const getChatHistoryKey = (title: string, slug?: string) => {
     if (slug) {
       return `${CHROME_STORAGE_KEYS.AI_CHAT_HISTORY}-slug-${slug}`
@@ -39,6 +55,12 @@ export default function AITab({ description: propDescription, code: propCode, sl
     return `${CHROME_STORAGE_KEYS.AI_CHAT_HISTORY}-${sanitized}`
   }
 
+  // Load chat history for current problem. When we have a slug, also check
+  // the legacy title-only key: if the slug key is empty but the title key
+  // has messages (e.g. saved before slug tracking existed, or by the
+  // now-fixed key-mismatch bug where a reply was saved without the slug),
+  // recover them and migrate them onto the slug key so future loads are
+  // consistent.
   const loadChatHistory = useCallback(async (title: string, slug?: string) => {
     const key = getChatHistoryKey(title, slug)
     const storedHistory = await readChromeStorage<ChatMessage[]>(key, [])
@@ -56,17 +78,25 @@ export default function AITab({ description: propDescription, code: propCode, sl
     setMessages(Array.isArray(storedHistory) ? storedHistory : [])
   }, [])
 
+  // Save chat history for current problem
   const saveChatHistory = useCallback(async (title: string, nextMessages: ChatMessage[], slug?: string) => {
     const key = getChatHistoryKey(title, slug)
     await writeChromeStorage(key, nextMessages)
   }, [])
 
+  // Clear chat history for current problem
   const clearChatHistory = useCallback(async (title: string, slug?: string) => {
     const key = getChatHistoryKey(title, slug)
     await removeChromeStorage(key)
     setMessages([])
   }, [])
 
+  // Auto-scroll to the latest message as the conversation grows or streams in.
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages, isLoading])
+
+  // Load chat history & context on mount using storage abstraction
   useEffect(() => {
     const initialize = async () => {
       const storedContext = await readChromeStorage<AIContext>(CHROME_STORAGE_KEYS.AI_LAST_CONTEXT, {
@@ -75,27 +105,42 @@ export default function AITab({ description: propDescription, code: propCode, sl
         code: "",
         language: ""
       })
+      // Prefer the eagerly-available prop slug (see AITabProps) over
+      // whatever was last persisted, in case the user is on a different
+      // problem than the last stored context.
       setPageContext(propSlug ? { ...storedContext, slug: propSlug } : storedContext)
+
+      // Refresh current context from open tab
       await detectPageContext()
     }
     initialize()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Keep pageContext.slug in sync if the parent's tracked slug changes (e.g.
+  // the user navigated LeetCode to a different problem while this tab
+  // remains mounted) without waiting for detectPageContext's own round-trip.
   useEffect(() => {
     if (!propSlug) return
     setPageContext(prev => (prev.slug === propSlug ? prev : { ...prev, slug: propSlug }))
   }, [propSlug])
 
+  // Load chat history when page context (problem) changes. Keyed off slug OR
+  // title so a slug that arrives (via the eager prop) before the title does
+  // (via the async GET_CONTEXT round-trip) still triggers a load instead of
+  // waiting on title specifically.
   useEffect(() => {
     if (pageContext.title || pageContext.slug) {
       loadChatHistory(pageContext.title, pageContext.slug)
     }
   }, [pageContext.title, pageContext.slug, loadChatHistory])
 
+  // Sync context to storage
   const syncContextToStorage = useCallback(async (nextContext: AIContext) => {
     await writeChromeStorage(CHROME_STORAGE_KEYS.AI_LAST_CONTEXT, nextContext)
   }, [])
 
+  // Handle incoming props from parent (e.g. from float button clicks)
   useEffect(() => {
     if (propDescription || propCode) {
       setPageContext(prev => {
@@ -104,6 +149,10 @@ export default function AITab({ description: propDescription, code: propCode, sl
           description: propDescription || prev.description,
           code: propCode || prev.code,
           language: prev.language || "javascript",
+          // Rebuilding a fresh object here previously dropped whatever slug
+          // the initialize/sync effects had already set, since it wasn't
+          // carried forward from `prev` - that silently pushed chat saves
+          // back onto the less reliable title-only key.
           slug: propSlug || prev.slug
         }
         syncContextToStorage(nextContext)
@@ -141,6 +190,7 @@ export default function AITab({ description: propDescription, code: propCode, sl
     }
   }
 
+  // Abort request is managed inside services/aiService.ts
   const handleStop = () => {
     cancelActiveAIRequest()
   }
@@ -151,9 +201,11 @@ export default function AITab({ description: propDescription, code: propCode, sl
     }
   }
 
+  // Prepend recent messages for context/history memory
   const buildMessageWithHistory = (newMsg: string, history: ChatMessage[]) => {
     if (history.length === 0) return newMsg
 
+    // Format last 6 turns to keep context size reasonable
     const recentHistory = history.slice(-6)
     const formattedHistory = recentHistory
       .map(m => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`)
@@ -182,6 +234,7 @@ export default function AITab({ description: propDescription, code: propCode, sl
     }
 
     try {
+      // Build message payload with conversation memory
       const compiledMessage = buildMessageWithHistory(textToSend, messages)
 
       const res = await sendAIMessage({
@@ -277,3 +330,4 @@ export default function AITab({ description: propDescription, code: propCode, sl
     </div>
   )
 }
+export { AITab }
