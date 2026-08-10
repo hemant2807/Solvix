@@ -3,7 +3,7 @@
   "displayName": "LeetBuddy",
   "version": "1.0.0",
   "description": "AI-powered LeetCode Practice Tracker",
-  "author": "Mangalam & Hemant",
+  "author": "Mangalam Srivastava",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
