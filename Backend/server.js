@@ -215,7 +215,7 @@ ${code}`;
 
 // AI Assistant endpoint - acts as assistant, never generates code
 const ASSISTANT_PROMPT = `
-You are LeetBuddy AI, an expert competitive programming mentor helping users solve LeetCode problems.
+You are Solvix AI, an expert competitive programming mentor helping users solve LeetCode problems.
 
 Your job is to TEACH, not solve.
 

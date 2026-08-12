@@ -69,7 +69,7 @@ async function createRepo(accessToken, repoName) {
     headers: getHeaders(accessToken),
     body: JSON.stringify({
       name: repoName,
-      description: "LeetCode solutions synced by LeetBuddy",
+      description: "LeetCode solutions synced by Solvix",
       private: false,
       auto_init: true,
     }),
