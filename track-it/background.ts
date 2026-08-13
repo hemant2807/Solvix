@@ -2,10 +2,27 @@
 
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === "NAVIGATE" && msg.url) {
+    try {
+      const parsed = new URL(msg.url)
+      const isAllowedHost = 
+        parsed.hostname === "leetcode.com" || 
+        parsed.hostname.endsWith(".leetcode.com") ||
+        parsed.hostname === "github.com" ||
+        parsed.hostname.endsWith(".github.com")
+
+      if (!isAllowedHost) {
+        console.warn("[Solvix] Blocked navigation to untrusted domain:", msg.url)
+        return
+      }
+    } catch (e) {
+      console.error("[Solvix] Invalid navigation URL:", msg.url)
+      return
+    }
+
     const doUpdate = (tabId: number) => {
       chrome.tabs.update(tabId, { url: msg.url }, () => {
         if (chrome.runtime.lastError) {
-          console.error("[LeetBuddy] NAVIGATE failed:", chrome.runtime.lastError.message)
+          console.error("[Solvix] NAVIGATE failed:", chrome.runtime.lastError.message)
         }
       })
     }

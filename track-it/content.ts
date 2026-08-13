@@ -8,8 +8,10 @@ export const config: PlasmoCSConfig = {
 }
 
 // ---- Inject verdict hook ----
+const verificationToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 const script = document.createElement("script")
 script.src = chrome.runtime.getURL("inject-fetch.js")
+script.setAttribute("data-token", verificationToken)
 document.documentElement.appendChild(script)
 script.remove()
 
@@ -34,10 +36,10 @@ function sendMessageToExtension(message: any) {
     chrome.runtime.sendMessage(message)
   } catch (err) {
     if (err instanceof Error && err.message.includes("Extension context invalidated")) {
-      console.debug("[LeetBuddy] Extension context invalidated, skipping message")
+      console.debug("[Solvix] Extension context invalidated, skipping message")
       return
     }
-    console.error("[LeetBuddy] Failed to send message:", err)
+    console.error("[Solvix] Failed to send message:", err)
   }
 }
 
@@ -237,6 +239,11 @@ function getCurrentCode(): string {
 
 window.addEventListener("leetcode-verdict", (event: any) => {
   const detail = event.detail;
+  if (!detail || detail.token !== verificationToken) {
+    console.warn("[Solvix] Blocked untrusted verdict event attempt.")
+    return
+  }
+
   const code = getCurrentCode();
   const language = document.querySelector("button.rounded.items-center")?.textContent?.trim() || "";
 
