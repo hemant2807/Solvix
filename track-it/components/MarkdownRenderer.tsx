@@ -105,7 +105,7 @@ export default function MarkdownRenderer({ content }: Props) {
                   onClick={async () => {
                     await navigator.clipboard.writeText(section.code)
                     window.dispatchEvent(
-                      new CustomEvent("leetbuddy-toast", {
+                      new CustomEvent("Solvix-toast", {
                         detail: { message: "Copied to clipboard", type: "success" }
                       })
                     )

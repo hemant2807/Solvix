@@ -24,16 +24,16 @@ interface ChatInputProps {
 }
 
 const iconMap: Record<string, React.ReactNode> = {
-  HelpCircle: <HelpCircle className="text-cyan-400" size="{12}"/>,
-  Lightbulb: <Lightbulb className="text-yellow-400" size="{12}"/>,
-  FileCode: <FileCode className="text-green-400" size="{12}"/>,
-  Zap: <Zap className="text-orange-400" size="{12}"/>,
-  Bug: <Bug className="text-red-400" size="{12}"/>,
-  Layers: <Layers className="text-purple-400" size="{12}"/>,
-  GitBranch: <GitBranch className="text-pink-400" size="{12}"/>,
-  AlertTriangle: <AlertTriangle className="text-yellow-500" size="{12}"/>,
-  Terminal: <Terminal className="text-teal-400" size="{12}"/>,
-  Code2: <Code2 className="text-blue-400" size="{12}"/>
+  HelpCircle: <HelpCircle className="text-cyan-400" size={12}/>,
+  Lightbulb: <Lightbulb className="text-yellow-400" size={12}/>,
+  FileCode: <FileCode className="text-green-400" size={12}/>,
+  Zap: <Zap className="text-orange-400" size={12}/>,
+  Bug: <Bug className="text-red-400" size={12}/>,
+  Layers: <Layers className="text-purple-400" size={12}/>,
+  GitBranch: <GitBranch className="text-pink-400" size={12}/>,
+  AlertTriangle: <AlertTriangle className="text-yellow-500" size={12}/>,
+  Terminal: <Terminal className="text-teal-400" size={12}/>,
+  Code2: <Code2 className="text-blue-400" size={12}/>
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -98,7 +98,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             title="Stop Generating"
             className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 p-2 rounded-xl transition-all duration-300 hover:scale-105"
           >
-            <StopCircle size="{16}"/>
+            <StopCircle size={16}/>
           </button>
         ) : (
           <button
@@ -106,7 +106,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             disabled={!value.trim()}
             className="bg-gradient-to-r from-yellow-400 to-orange-500 disabled:from-gray-800 disabled:to-gray-800 disabled:cursor-not-allowed text-black p-2 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-yellow-500/10"
           >
-            <Send size="{16}"/>
+            <Send size={16}/>
           </button>
         )}
       </div>

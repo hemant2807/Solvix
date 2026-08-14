@@ -102,12 +102,12 @@ function IndexSidePanel() {
     let cancelled = false
     readChromeStorage<number>(CHROME_STORAGE_KEYS.DAILY_GOAL, 3).then((value) => {
       // eslint-disable-next-line no-console
-      console.log("[LeetBuddy DailyGoal] Profile mount-load read:", value, "cancelled:", cancelled)
+      console.log("[Solvix DailyGoal] Profile mount-load read:", value, "cancelled:", cancelled)
       if (!cancelled) setDailyGoal(value)
     })
     const unsubscribe = onChromeStorageKeyChanged<number>(CHROME_STORAGE_KEYS.DAILY_GOAL, (value) => {
       // eslint-disable-next-line no-console
-      console.log("[LeetBuddy DailyGoal] Profile onChanged fired:", value, "cancelled:", cancelled)
+      console.log("[Solvix DailyGoal] Profile onChanged fired:", value, "cancelled:", cancelled)
       if (typeof value === "number" && !cancelled) setDailyGoal(value)
     })
     return () => {
@@ -382,7 +382,7 @@ const handleStoreSubmission = async (data: {
   // answer/compile error/runtime error/unfinished code must never reach
   // GitHub. This is a separate, independent try/catch from submission
   // storage above so a GitHub failure (not connected, API hiccup) can never
-  // block or corrupt the LeetBuddy submission record itself.
+  // block or corrupt the Solvix submission record itself.
   if (data.verdict === "Accepted" && leetcodeUser?.username) {
     try {
       await fetch(apiUrl("/api/github/push-solution"), {
@@ -444,10 +444,10 @@ const handleStoreSubmission = async (data: {
     try {
       await writeChromeStorage(CHROME_STORAGE_KEYS.DAILY_GOAL, value)
       // eslint-disable-next-line no-console
-      console.log("[LeetBuddy DailyGoal] Profile saveDailyGoal wrote:", value)
+      console.log("[Solvix DailyGoal] Profile saveDailyGoal wrote:", value)
       const verifyReadBack = await readChromeStorage<number>(CHROME_STORAGE_KEYS.DAILY_GOAL, -1)
       // eslint-disable-next-line no-console
-      console.log("[LeetBuddy DailyGoal] Profile saveDailyGoal read-back immediately after write:", verifyReadBack)
+      console.log("[Solvix DailyGoal] Profile saveDailyGoal read-back immediately after write:", verifyReadBack)
       // Update local state immediately for instant feedback rather than
       // waiting on the chrome.storage.onChanged round-trip; other mounted
       // surfaces (e.g. the Dashboard's DailyGoalRing) still pick this up via
@@ -534,7 +534,7 @@ const handleStoreSubmission = async (data: {
     if (typeof chrome === "undefined" || !chrome.identity) {
       setGithubError(
         "GitHub connect requires the Chrome extension environment (chrome.identity unavailable). " +
-        "Make sure LeetBuddy is loaded as an unpacked/packed extension (not a browser preview tab) " +
+        "Make sure Solvix is loaded as an unpacked/packed extension (not a browser preview tab) " +
         "and that the \"identity\" permission is granted, then reload the extension."
       )
       return

@@ -29,7 +29,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     <div className={`flex gap-2.5 ${isAssistant ? "justify-start" : "justify-end"}`}>
       {isAssistant && (
         <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow">
-          <Brain className="text-black" size="{14}"/>
+          <Brain className="text-black" size={14}/>
         </div>
       )}
 
@@ -55,12 +55,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               >
                 {isEntireCopied ? (
                   <>
-                    <Check className="text-green-400" size="{10}"/>
+                    <Check className="text-green-400" size={10}/>
                     <span className="text-green-400">Response Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy size="{10}"/>
+                    <Copy size={10}/>
                     <span>Copy Response</span>
                   </>
                 )}
@@ -72,7 +72,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 
       {!isAssistant && (
         <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
-          <MessageSquare className="text-gray-300" size="{14}"/>
+          <MessageSquare className="text-gray-300" size={14}/>
         </div>
       )}
     </div>

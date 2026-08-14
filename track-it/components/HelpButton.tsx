@@ -197,7 +197,7 @@ export default function HelpButton() {
     if (!isPremium || alternatives.length === 0) return null
 
     return (
-      <div className="leetbuddy-premium-alternatives" style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #333" }}>
+      <div className="Solvix-premium-alternatives" style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #333" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", color: "#fbbf24", fontWeight: 600, fontSize: "14px" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -276,24 +276,24 @@ export default function HelpButton() {
 
   return (
     <>
-      <button className="leetbuddy-help-btn" onClick={() => setOpen((prev) => !prev)}>
+      <button className="Solvix-help-btn" onClick={() => setOpen((prev) => !prev)}>
         🤖 AI Help
       </button>
 
       {open &&
         createPortal(
           <div
-            className="leetbuddy-popup"
+            className="Solvix-popup"
             style={{ position: "fixed", top: "120px", right: "40px", zIndex: 999999999 }}
           >
-            <div className="leetbuddy-header">
-              <span>🤖 LeetBuddy AI</span>
+            <div className="Solvix-header">
+              <span>🤖 Solvix AI</span>
               <button className="close-btn" onClick={() => setOpen(false)} title="Close">
                 ✕
               </button>
             </div>
 
-            <div className="leetbuddy-body">
+            <div className="Solvix-body">
               <div className="ai-actions">
                 {QUICK_ACTIONS.map((action) => (
                   action.isExternal ? (
