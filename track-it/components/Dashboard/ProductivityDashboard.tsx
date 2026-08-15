@@ -68,7 +68,7 @@ export const ProductivityDashboard: React.FC<ProductivityDashboardProps> = ({
       // Load daily goal
       const savedGoal = await readChromeStorage<number>(CHROME_STORAGE_KEYS.DAILY_GOAL, 3);
       // eslint-disable-next-line no-console
-      console.log("[LeetBuddy DailyGoal] Dashboard mount-load read:", savedGoal);
+      console.log("[Solvix DailyGoal] Dashboard mount-load read:", savedGoal);
       setGoalTarget(savedGoal);
 
       // Load active sheet
@@ -78,10 +78,10 @@ export const ProductivityDashboard: React.FC<ProductivityDashboardProps> = ({
 
       // Load sheet progress & bookmarks/notes
       if (username) {
-        const progressKey = `leetbuddy.practice.progress.${username}.${sheet.id}`;
-        const bookmarkKey = `leetbuddy.practice.bookmarks.${username}.${sheet.id}`;
-        const noteKey = `leetbuddy.practice.notes.${username}.${sheet.id}`;
-        const recentKey = `leetbuddy.practice.recent.${username}.${sheet.id}`;
+        const progressKey = `Solvix.practice.progress.${username}.${sheet.id}`;
+        const bookmarkKey = `Solvix.practice.bookmarks.${username}.${sheet.id}`;
+        const noteKey = `Solvix.practice.notes.${username}.${sheet.id}`;
+        const recentKey = `Solvix.practice.recent.${username}.${sheet.id}`;
 
         const [progressArr, bMarks, nTes, rSessions] = await Promise.all([
           readChromeStorage<string[]>(progressKey, []),
@@ -193,7 +193,7 @@ export const ProductivityDashboard: React.FC<ProductivityDashboardProps> = ({
   useEffect(() => {
     return onChromeStorageKeyChanged<number>(CHROME_STORAGE_KEYS.DAILY_GOAL, (value) => {
       // eslint-disable-next-line no-console
-      console.log("[LeetBuddy DailyGoal] Dashboard onChanged fired:", value);
+      console.log("[Solvix DailyGoal] Dashboard onChanged fired:", value);
       if (typeof value === "number") setGoalTarget(value);
     });
   }, []);
@@ -217,12 +217,12 @@ export const ProductivityDashboard: React.FC<ProductivityDashboardProps> = ({
 
   const handleUpdateGoal = async (newTarget: number) => {
     // eslint-disable-next-line no-console
-    console.log("[LeetBuddy DailyGoal] Dashboard handleUpdateGoal called with:", newTarget);
+    console.log("[Solvix DailyGoal] Dashboard handleUpdateGoal called with:", newTarget);
     setGoalTarget(newTarget);
     await writeChromeStorage(CHROME_STORAGE_KEYS.DAILY_GOAL, newTarget);
     const verifyReadBack = await readChromeStorage<number>(CHROME_STORAGE_KEYS.DAILY_GOAL, -1);
     // eslint-disable-next-line no-console
-    console.log("[LeetBuddy DailyGoal] Dashboard handleUpdateGoal read-back immediately after write:", verifyReadBack);
+    console.log("[Solvix DailyGoal] Dashboard handleUpdateGoal read-back immediately after write:", verifyReadBack);
   };
 
   // Next unsolved problem for Today's Focus

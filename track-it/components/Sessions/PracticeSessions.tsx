@@ -94,10 +94,10 @@ const SESSION_PAGE_SIZE = 5;
 const MAX_RECENT_SESSIONS = 5;
 
 const buildStorageKeys = (username: string, sheetId: string) => ({
-  bookmarks: `leetbuddy.practice.bookmarks.${username}.${sheetId}`,
-  notes: `leetbuddy.practice.notes.${username}.${sheetId}`,
-  recent: `leetbuddy.practice.recent.${username}.${sheetId}`,
-  progress: `leetbuddy.practice.progress.${username}.${sheetId}`
+  bookmarks: `Solvix.practice.bookmarks.${username}.${sheetId}`,
+  notes: `Solvix.practice.notes.${username}.${sheetId}`,
+  recent: `Solvix.practice.recent.${username}.${sheetId}`,
+  progress: `Solvix.practice.progress.${username}.${sheetId}`
 });
 
 const getQuestionKey = (session: Session, question?: Question | null) => {
