@@ -17,8 +17,9 @@ const { scheduleMonthlyDigest } = require("./services/monthlyDigestScheduler");
 const { initializeDailyReportScheduler } = require("./services/dailyReportScheduler");
 
 const AI_PROVIDER = process.env.AI_PROVIDER || "gemini";
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
-
+// NOTE: GROQ_API_KEY is no longer read from .env for user requests.
+// Each request must supply the user's own key via the X-Groq-Api-Key header.
+// The .env variable may be removed from production once this change is deployed.
 
 const app = express()
 app.use(cors())
@@ -57,10 +58,15 @@ const GEMINI_URL =
 const API_KEY = process.env.GEMINI_API_KEY
 
 
-async function callAI(prompt) {
+// callAI accepts the current user's Groq key per-request.
+// The key is NEVER logged, stored, or returned in any response.
+async function callAI(prompt, groqApiKey) {
   if (AI_PROVIDER === "groq") {
-    if (!GROQ_API_KEY) {
-      return "No response from AI";
+    if (!groqApiKey) {
+      // Caller must supply the key; we never fall back to a shared key.
+      const err = new Error("groq_key_required");
+      err.code = "groq_key_required";
+      throw err;
     }
 
     const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
@@ -69,7 +75,7 @@ async function callAI(prompt) {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
+          Authorization: `Bearer ${groqApiKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -85,17 +91,32 @@ async function callAI(prompt) {
       }
     )
 
-    const json = await response.json();
-    
     if (!response.ok) {
-      return "No response from AI";
+      const status = response.status;
+      // Map Groq-specific HTTP statuses to typed error codes.
+      // Do NOT log the key or the response body.
+      if (status === 401 || status === 403) {
+        const err = new Error("groq_key_invalid");
+        err.code = "groq_key_invalid";
+        throw err;
+      }
+      if (status === 429) {
+        const err = new Error("groq_rate_limited");
+        err.code = "groq_rate_limited";
+        throw err;
+      }
+      // 5xx or other unexpected status
+      const err = new Error("groq_server_error");
+      err.code = "groq_server_error";
+      throw err;
     }
 
+    const json = await response.json();
     const content = json.choices?.[0]?.message?.content;
     return content || "No response from AI";
   }
 
-  // Gemini Fallback
+  // Gemini fallback (used when AI_PROVIDER !== "groq")
   if (!API_KEY) {
     return "No response from AI";
   }
@@ -179,6 +200,14 @@ Return ONLY the markdown code block and nothing else.
  app.post("/api/ask-ai", async (req, res) => {
   const { description, code } = req.body;
 
+  // Extract the user's Groq key from the request header.
+  // It is used only for this request and is never logged or stored.
+  const groqApiKey = req.headers["x-groq-api-key"] || "";
+
+  if (!groqApiKey) {
+    return res.status(402).json({ error: "groq_key_required" });
+  }
+
   if (!description || !code) {
     return res.status(400).json({
       error: "Missing description or code"
@@ -194,7 +223,7 @@ ${description}
 ${code}`;
 
   try {
-    let aiAnswer = await callAI(fullPrompt);
+    let aiAnswer = await callAI(fullPrompt, groqApiKey);
 
     aiAnswer = aiAnswer
       .replace(/```[a-z]*\n?/gi, "")
@@ -205,11 +234,23 @@ ${code}`;
       answer: aiAnswer
     });
   } catch (err) {
-    console.error("AI API error:", err);
-
-    res.status(500).json({
-      error: "AI request failed"
-    });
+    // Map typed error codes to appropriate HTTP status codes.
+    // Never log or return the user's API key.
+    const code = err.code;
+    if (code === "groq_key_required") {
+      return res.status(402).json({ error: "groq_key_required" });
+    }
+    if (code === "groq_key_invalid") {
+      return res.status(401).json({ error: "groq_key_invalid" });
+    }
+    if (code === "groq_rate_limited") {
+      return res.status(429).json({ error: "groq_rate_limited" });
+    }
+    if (code === "groq_server_error") {
+      return res.status(502).json({ error: "groq_server_error" });
+    }
+    console.error("AI API error:", err.message);
+    res.status(500).json({ error: "AI request failed" });
   }
 });
 
@@ -353,6 +394,14 @@ OUTPUT STYLE
 app.post("/api/ai-assistant", async (req, res) => {
 const { message, code, description, language } = req.body;
 
+// Extract the user's Groq key from the request header.
+// It is used only for this request and is never logged or stored.
+const groqApiKey = req.headers["x-groq-api-key"] || "";
+
+if (!groqApiKey) {
+  return res.status(402).json({ error: "groq_key_required" });
+}
+
 
 const wantsSolution = /^generate/i.test(message.trim());
 
@@ -384,7 +433,7 @@ ${message}
 `;
 
 try {
-  let assistantResponse = await callAI(fullPrompt);
+  let assistantResponse = await callAI(fullPrompt, groqApiKey);
 
   assistantResponse = assistantResponse.trim();
 
@@ -393,11 +442,23 @@ try {
   });
 
 } catch (err) {
-  console.error("AI Assistant error:", err);
-
-  res.status(500).json({
-    error: "AI request failed"
-  });
+  // Map typed error codes to appropriate HTTP status codes.
+  // Never log or return the user's API key.
+  const code = err.code;
+  if (code === "groq_key_required") {
+    return res.status(402).json({ error: "groq_key_required" });
+  }
+  if (code === "groq_key_invalid") {
+    return res.status(401).json({ error: "groq_key_invalid" });
+  }
+  if (code === "groq_rate_limited") {
+    return res.status(429).json({ error: "groq_rate_limited" });
+  }
+  if (code === "groq_server_error") {
+    return res.status(502).json({ error: "groq_server_error" });
+  }
+  console.error("AI Assistant error:", err.message);
+  res.status(500).json({ error: "AI request failed" });
 }
 });
 

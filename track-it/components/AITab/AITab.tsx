@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { ChatMessage, AIContext } from "../../types/shared"
-import { sendAIMessage, cancelActiveAIRequest } from "../../services/aiService"
+import { sendAIMessage, cancelActiveAIRequest, AIError } from "../../services/aiService"
+import type { AIErrorCode } from "../../services/aiService"
 import { readChromeStorage, writeChromeStorage, removeChromeStorage, CHROME_STORAGE_KEYS } from "../../utils/storage"
 import { ContextBar } from "./components/ContextBar"
 import { ChatWindow } from "./components/ChatWindow"
 import { ChatInput } from "./components/ChatInput"
+import GroqApiKeySetup from "./GroqApiKeySetup"
 
 type AITabProps = {
   description: string
@@ -25,6 +27,10 @@ export default function AITab({ description: propDescription, code: propCode, sl
   const [inputMessage, setInputMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  // Groq API key gating
+  const [hasGroqKey, setHasGroqKey] = useState<boolean | null>(null) // null = not yet loaded
+  const [groqKeyError, setGroqKeyError] = useState<AIErrorCode | null>(null)
 
   const [pageContext, setPageContext] = useState<AIContext>({
     title: "",
@@ -99,6 +105,10 @@ export default function AITab({ description: propDescription, code: propCode, sl
   // Load chat history & context on mount using storage abstraction
   useEffect(() => {
     const initialize = async () => {
+      // Check whether the user has a Groq key saved
+      const key = await readChromeStorage<string>(CHROME_STORAGE_KEYS.GROQ_API_KEY, "")
+      setHasGroqKey(!!key)
+
       const storedContext = await readChromeStorage<AIContext>(CHROME_STORAGE_KEYS.AI_LAST_CONTEXT, {
         title: "",
         description: "",
@@ -269,12 +279,23 @@ export default function AITab({ description: propDescription, code: propCode, sl
         if (pageContext.title || pageContext.slug) {
           await saveChatHistory(pageContext.title, finalMessages, pageContext.slug)
         }
+      } else if (error instanceof AIError && (error.code === "groq_key_required" || error.code === "groq_key_invalid")) {
+        // Key is missing or was rejected — show setup/update card, not a chat error
+        setHasGroqKey(false)
+        setGroqKeyError(error.code)
       } else {
-        console.error("AI Error:", error)
+        // Rate limit, server error, network failure — show as a chat message, NOT as a key error
+        const code = error instanceof AIError ? error.code : null
+        let content = "❌ Sorry, I encountered an error. Please check your connection and try again."
+        if (code === "groq_rate_limited") {
+          content = "⏳ Groq rate limit reached. Please wait a moment and try again."
+        } else if (code === "groq_server_error") {
+          content = "⚠️ Groq service is temporarily unavailable. Please try again shortly."
+        }
         const errorMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "❌ Sorry, I encountered an error. Please check your connection and try again.",
+          content,
           timestamp: new Date().toISOString()
         }
         const finalMessages = [...updatedMessages, errorMessage]
@@ -296,6 +317,32 @@ export default function AITab({ description: propDescription, code: propCode, sl
     } catch (err) {
       console.error("Copy failed:", err)
     }
+  }
+
+  // hasGroqKey===null means we haven't finished loading yet — don't flash setup
+  if (hasGroqKey === null) {
+    return (
+      <div className="flex flex-col h-[74vh] overflow-hidden bg-gray-950/20 rounded-2xl relative items-center justify-center">
+        <div className="w-6 h-6 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  // No key configured or key error — show setup card (gates access to chat)
+  if (!hasGroqKey || groqKeyError) {
+    return (
+      <div className="flex flex-col h-[74vh] overflow-hidden bg-gray-950/20 rounded-2xl relative">
+        <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+          <GroqApiKeySetup
+            errorMode={groqKeyError}
+            onKeySaved={() => {
+              setHasGroqKey(true)
+              setGroqKeyError(null)
+            }}
+          />
+        </div>
+      </div>
+    )
   }
 
   return (

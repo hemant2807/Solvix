@@ -7,9 +7,9 @@ const MarkdownRenderer = ({ content }: any) => <pre style={{ whiteSpace: 'pre-wr
 const getSimilarQuestions = (slug: string, title?: string) => [];
 type AlternativeProblem = { url: string; note: string; isSearch?: boolean; difficulty?: string; title: string; platform: string; };
 
-import { sendAIMessage } from "../services/aiService"
+import { sendAIMessage, AIError } from "../services/aiService"
 import { PROMPT_TEMPLATES } from "../constants/aiPrompts"
-import { writeChromeStorage, CHROME_STORAGE_KEYS } from "../utils/storage"
+import { readChromeStorage, writeChromeStorage, CHROME_STORAGE_KEYS } from "../utils/storage"
 import { openInNewTab } from "../utils/navigation"
 import type { AIContext } from "../types/shared"
 
@@ -161,6 +161,15 @@ export default function HelpButton() {
       setLoading(true)
       setErrorMessage(null)
 
+      // Gate: check for Groq key before making any AI request
+      const groqApiKey = await readChromeStorage<string>(CHROME_STORAGE_KEYS.GROQ_API_KEY, "")
+      if (!groqApiKey) {
+        setErrorMessage("Please add your Groq API key in the Solvix sidebar before using AI Help.")
+        setResponse(null)
+        setLoading(false)
+        return
+      }
+
       const { description, code, language } = getQuestionContext()
       const res = await sendAIMessage({
         message: getPromptMessage(promptLabel),
@@ -171,8 +180,24 @@ export default function HelpButton() {
 
       setResponse(res.answer || "No response received.")
     } catch (err) {
-      console.error("AI Error:", err)
-      setErrorMessage("Something went wrong. Please try again.")
+      if (err instanceof AIError) {
+        switch (err.code) {
+          case "groq_key_required":
+          case "groq_key_invalid":
+            setErrorMessage("Your Groq API key is invalid or expired. Please update it in the Solvix sidebar.")
+            break
+          case "groq_rate_limited":
+            setErrorMessage("Groq rate limit reached. Please wait a moment and try again.")
+            break
+          case "groq_server_error":
+            setErrorMessage("Groq service is temporarily unavailable. Please try again shortly.")
+            break
+          default:
+            setErrorMessage("Something went wrong. Please try again.")
+        }
+      } else {
+        setErrorMessage("Something went wrong. Please try again.")
+      }
       setResponse(null)
     } finally {
       setLoading(false)

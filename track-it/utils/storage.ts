@@ -3,7 +3,8 @@ export const CHROME_STORAGE_KEYS = {
   AI_CHAT_HISTORY: "Solvix.ai_chat_history",
   AI_LAST_CONTEXT: "Solvix.ai_last_context",
   SELECTED_SHEET: "Solvix.selected_sheet",
-  DAILY_GOAL: "Solvix.daily_goal"
+  DAILY_GOAL: "Solvix.daily_goal",
+  GROQ_API_KEY: "Solvix.groq_api_key"
 } as const;
 
 export async function readChromeStorage<T>(key: string, fallback: T): Promise<T> {
