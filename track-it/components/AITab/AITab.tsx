@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { ChatMessage, AIContext } from "../../types/shared"
 import { sendAIMessage, cancelActiveAIRequest, AIError } from "../../services/aiService"
 import type { AIErrorCode } from "../../services/aiService"
-import { readChromeStorage, writeChromeStorage, removeChromeStorage, CHROME_STORAGE_KEYS } from "../../utils/storage"
+import { readChromeStorage, writeChromeStorage, removeChromeStorage, onChromeStorageKeyChanged, CHROME_STORAGE_KEYS } from "../../utils/storage"
 import { ContextBar } from "./components/ContextBar"
 import { ChatWindow } from "./components/ChatWindow"
 import { ChatInput } from "./components/ChatInput"
@@ -104,9 +104,11 @@ export default function AITab({ description: propDescription, code: propCode, sl
 
   // Load chat history & context on mount using storage abstraction
   useEffect(() => {
+    let mounted = true
     const initialize = async () => {
       // Check whether the user has a Groq key saved
       const key = await readChromeStorage<string>(CHROME_STORAGE_KEYS.GROQ_API_KEY, "")
+      if (!mounted) return
       setHasGroqKey(!!key)
 
       const storedContext = await readChromeStorage<AIContext>(CHROME_STORAGE_KEYS.AI_LAST_CONTEXT, {
@@ -115,6 +117,7 @@ export default function AITab({ description: propDescription, code: propCode, sl
         code: "",
         language: ""
       })
+      if (!mounted) return
       // Prefer the eagerly-available prop slug (see AITabProps) over
       // whatever was last persisted, in case the user is on a different
       // problem than the last stored context.
@@ -124,6 +127,19 @@ export default function AITab({ description: propDescription, code: propCode, sl
       await detectPageContext()
     }
     initialize()
+
+    const unsubscribeKey = onChromeStorageKeyChanged<string>(CHROME_STORAGE_KEYS.GROQ_API_KEY, (newKey) => {
+      if (!mounted) return
+      setHasGroqKey(!!newKey)
+      if (!newKey) {
+        setGroqKeyError(null)
+      }
+    })
+
+    return () => {
+      mounted = false
+      unsubscribeKey()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -339,6 +355,10 @@ export default function AITab({ description: propDescription, code: propCode, sl
               setHasGroqKey(true)
               setGroqKeyError(null)
             }}
+            onKeyRemoved={() => {
+              setHasGroqKey(false)
+              setGroqKeyError(null)
+            }}
           />
         </div>
       </div>
@@ -356,6 +376,18 @@ export default function AITab({ description: propDescription, code: propCode, sl
       />
 
       <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
+        <GroqApiKeySetup
+          errorMode={groqKeyError}
+          onKeySaved={() => {
+            setHasGroqKey(true)
+            setGroqKeyError(null)
+          }}
+          onKeyRemoved={() => {
+            setHasGroqKey(false)
+            setGroqKeyError(null)
+          }}
+        />
+
         <ChatWindow
           messages={messages}
           isLoading={isLoading}
