@@ -1,6 +1,8 @@
 const Session = require("../models/Session");
 const User = require("../models/User");
 
+const { sendSessionSummaryEmail } = require("../services/emailService");
+
 const setQuestionVerdict = async (req, res) => {
   try {
     const { sessionId, questionId } = req.params;
@@ -247,8 +249,18 @@ const finishSession = async (req, res) => {
     session.completedQuestions = session.questions.filter(q => q.completed).length;
     
     await session.save();
-
-    // TODO: Email notification logic will go here in a future commit
+    
+    // Send email notification (non-blocking - don't fail the request if email fails)
+    setImmediate(async () => {
+      try {
+        const user = await User.findOne({ username: session.username });
+        if (user) {
+          await sendSessionSummaryEmail(user, session.toObject());
+        }
+      } catch (notifyError) {
+        console.error("Error sending session summary email:", notifyError);
+      }
+    });
 
     res.json(session);
   } catch (error) {
