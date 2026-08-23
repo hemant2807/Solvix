@@ -20,6 +20,10 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log("......MongoDB connected........."))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/submissions", submissionRoutes); // NEW ROUTE
+
 // Basic health check route
 app.get("/", (req, res) => {
   res.json({ message: "LeetBuddy API is running!" });
