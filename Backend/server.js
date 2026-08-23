@@ -6,6 +6,8 @@ const userRoutes = require("./routes/userRoutes");
 const submissionRoutes = require("./routes/submissionRoutes"); 
 const sessionRoutes = require("./routes/sessionRoutes"); 
 const githubRoutes = require("./routes/githubRoutes");
+const onboardingRoutes = require("./routes/onboardingRoutes");
+const leetcodeRoutes = require("./routes/leetcodeRoutes");
 
 const { initializeReminderScheduler } = require("./services/reminderScheduler");
 const { scheduleMonthlyDigest } = require("./services/monthlyDigestScheduler");
@@ -43,6 +45,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/submissions", submissionRoutes); 
 app.use("/api/sessions", sessionRoutes); 
 app.use("/api/github", githubRoutes);
+app.use("/api/onboarding", onboardingRoutes);
+app.use("/api/leetcode", leetcodeRoutes);
 
 // ==========================================
 // AI CONFIGURATION & HELPERS
