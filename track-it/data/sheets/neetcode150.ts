@@ -1,0 +1,43 @@
+import type { PracticeSheet } from './types';
+
+export const neetcode150Sheet: PracticeSheet = {
+  id: 'neetcode-150',
+  name: 'NeetCode 150 Practice Roadmap',
+  shortName: 'NeetCode 150',
+  description: 'Curated 150 practice problems organized by pattern and difficulty for software engineering interviews.',
+  category: 'curated',
+  author: 'NeetCode',
+  totalQuestions: 150,
+  questions: [
+    { id: 'nc-1', name: 'Contains Duplicate', leetcodeUrl: 'https://leetcode.com/problems/contains-duplicate/', difficulty: 'Easy', topics: ['Array', 'Hash Table'] },
+    { id: 'nc-2', name: 'Valid Anagram', leetcodeUrl: 'https://leetcode.com/problems/valid-anagram/', difficulty: 'Easy', topics: ['Hash Table', 'String'] },
+    { id: 'nc-3', name: 'Two Sum', leetcodeUrl: 'https://leetcode.com/problems/two-sum/', difficulty: 'Easy', topics: ['Array', 'Hash Table'] },
+    { id: 'nc-4', name: 'Group Anagrams', leetcodeUrl: 'https://leetcode.com/problems/group-anagrams/', difficulty: 'Medium', topics: ['Array', 'Hash Table', 'String'] },
+    { id: 'nc-5', name: 'Top K Frequent Elements', leetcodeUrl: 'https://leetcode.com/problems/top-k-frequent-elements/', difficulty: 'Medium', topics: ['Array', 'Hash Table', 'Heap (Priority Queue)'] },
+    { id: 'nc-6', name: 'Product of Array Except Self', leetcodeUrl: 'https://leetcode.com/problems/product-of-array-except-self/', difficulty: 'Medium', topics: ['Array', 'Prefix Sum'] },
+    { id: 'nc-7', name: 'Valid Sudoku', leetcodeUrl: 'https://leetcode.com/problems/valid-sudoku/', difficulty: 'Medium', topics: ['Array', 'Hash Table', 'Matrix'] },
+    { id: 'nc-8', name: 'Encode and Decode Strings', leetcodeUrl: 'https://leetcode.com/problems/encode-and-decode-strings/', difficulty: 'Medium', topics: ['String', 'Design'] },
+    { id: 'nc-9', name: 'Longest Consecutive Sequence', leetcodeUrl: 'https://leetcode.com/problems/longest-consecutive-sequence/', difficulty: 'Medium', topics: ['Array', 'Hash Table', 'Union Find'] },
+    { id: 'nc-10', name: 'Valid Palindrome', leetcodeUrl: 'https://leetcode.com/problems/valid-palindrome/', difficulty: 'Easy', topics: ['Two Pointers', 'String'] },
+    { id: 'nc-11', name: 'Two Sum II - Input Array Is Sorted', leetcodeUrl: 'https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/', difficulty: 'Medium', topics: ['Array', 'Two Pointers', 'Binary Search'] },
+    { id: 'nc-12', name: '3Sum', leetcodeUrl: 'https://leetcode.com/problems/3sum/', difficulty: 'Medium', topics: ['Array', 'Two Pointers', 'Sorting'] },
+    { id: 'nc-13', name: 'Container With Most Water', leetcodeUrl: 'https://leetcode.com/problems/container-with-most-water/', difficulty: 'Medium', topics: ['Array', 'Two Pointers', 'Greedy'] },
+    { id: 'nc-14', name: 'Trapping Rain Water', leetcodeUrl: 'https://leetcode.com/problems/trapping-rain-water/', difficulty: 'Hard', topics: ['Array', 'Two Pointers', 'Stack', 'Monotonic Stack'] },
+    { id: 'nc-15', name: 'Best Time to Buy and Sell Stock', leetcodeUrl: 'https://leetcode.com/problems/best-time-to-buy-and-sell-stock/', difficulty: 'Easy', topics: ['Array', 'Dynamic Programming'] },
+    { id: 'nc-16', name: 'Longest Substring Without Repeating Characters', leetcodeUrl: 'https://leetcode.com/problems/longest-substring-without-repeating-characters/', difficulty: 'Medium', topics: ['Hash Table', 'String', 'Sliding Window'] },
+    { id: 'nc-17', name: 'Longest Repeating Character Replacement', leetcodeUrl: 'https://leetcode.com/problems/longest-repeating-character-replacement/', difficulty: 'Medium', topics: ['Hash Table', 'String', 'Sliding Window'] },
+    { id: 'nc-18', name: 'Permutation in String', leetcodeUrl: 'https://leetcode.com/problems/permutation-in-string/', difficulty: 'Medium', topics: ['Hash Table', 'Two Pointers', 'String', 'Sliding Window'] },
+    { id: 'nc-19', name: 'Minimum Window Substring', leetcodeUrl: 'https://leetcode.com/problems/minimum-window-substring/', difficulty: 'Hard', topics: ['Hash Table', 'String', 'Sliding Window'] },
+    { id: 'nc-20', name: 'Sliding Window Maximum', leetcodeUrl: 'https://leetcode.com/problems/sliding-window-maximum/', difficulty: 'Hard', topics: ['Array', 'Queue', 'Sliding Window', 'Heap (Priority Queue)', 'Monotonic Queue'] },
+    { id: 'nc-21', name: 'Valid Parentheses', leetcodeUrl: 'https://leetcode.com/problems/valid-parentheses/', difficulty: 'Easy', topics: ['String', 'Stack'] },
+    { id: 'nc-22', name: 'Min Stack', leetcodeUrl: 'https://leetcode.com/problems/min-stack/', difficulty: 'Medium', topics: ['Stack', 'Design'] },
+    { id: 'nc-23', name: 'Evaluate Reverse Polish Notation', leetcodeUrl: 'https://leetcode.com/problems/evaluate-reverse-polish-notation/', difficulty: 'Medium', topics: ['Array', 'Math', 'Stack'] },
+    { id: 'nc-24', name: 'Generate Parentheses', leetcodeUrl: 'https://leetcode.com/problems/generate-parentheses/', difficulty: 'Medium', topics: ['String', 'Dynamic Programming', 'Backtracking'] },
+    { id: 'nc-25', name: 'Daily Temperatures', leetcodeUrl: 'https://leetcode.com/problems/daily-temperatures/', difficulty: 'Medium', topics: ['Array', 'Stack', 'Monotonic Stack'] },
+    { id: 'nc-26', name: 'Car Fleet', leetcodeUrl: 'https://leetcode.com/problems/car-fleet/', difficulty: 'Medium', topics: ['Array', 'Stack', 'Sorting', 'Monotonic Stack'] },
+    { id: 'nc-27', name: 'Largest Rectangle in Histogram', leetcodeUrl: 'https://leetcode.com/problems/largest-rectangle-in-histogram/', difficulty: 'Hard', topics: ['Array', 'Stack', 'Monotonic Stack'] },
+    { id: 'nc-28', name: 'Binary Search', leetcodeUrl: 'https://leetcode.com/problems/binary-search/', difficulty: 'Easy', topics: ['Array', 'Binary Search'] },
+    { id: 'nc-29', name: 'Search a 2D Matrix', leetcodeUrl: 'https://leetcode.com/problems/search-a-2d-matrix/', difficulty: 'Medium', topics: ['Array', 'Binary Search', 'Matrix'] },
+    { id: 'nc-30', name: 'Koko Eating Bananas', leetcodeUrl: 'https://leetcode.com/problems/koko-eating-bananas/', difficulty: 'Medium', topics: ['Array', 'Binary Search'] }
+  ]
+};
