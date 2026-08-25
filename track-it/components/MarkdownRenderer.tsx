@@ -6,6 +6,10 @@ interface Props {
   content: string
 }
 
+// Headings previously all rendered at the same size/weight regardless of
+// level (#, ##, ### all looked identical). Scale size down as level
+// increases so nested headings are visually distinguishable, same idea as
+// the sizing already used for the AI popup's inline chat formatter.
 function HeadingBlock({ level, children }: { level: number; children: string }) {
   const sizeByLevel: Record<number, string> = {
     1: "1.3rem",
@@ -16,12 +20,19 @@ function HeadingBlock({ level, children }: { level: number; children: string }) 
   const Tag = (`h${Math.min(level, 6)}` as unknown) as keyof JSX.IntrinsicElements
   return (
     <Tag style={{ marginTop: 16, marginBottom: 8, fontSize, fontWeight: 600, color: "#fbbf24" }}>
+      {/* Heading text previously rendered as a raw string, so a heading like
+          "# **Bugs Found**" (hash correctly detected, but bold markers
+          around the text itself) would show literal "**" inside an
+          otherwise-correct <h1>. Run it through the same inline parser used
+          for paragraphs/list items so bold/italic/inline-code inside a
+          heading are handled too. */}
       {renderInlineMarkdown(children)}
     </Tag>
   )
 }
 
 export default function MarkdownRenderer({ content }: Props) {
+  // Parse markdown into sections
   const sections = useMemo(() => parseMarkdown(content), [content])
 
   return (
@@ -118,6 +129,12 @@ export default function MarkdownRenderer({ content }: Props) {
   )
 }
 
+// If a line is entirely wrapped in ** or * (e.g. "**# Bugs Found**") AND
+// what's inside that wrapper itself starts with a heading marker, strip the
+// wrapper so heading detection sees the "#" at the start of the line like it
+// expects. Deliberately narrow (requires the unwrapped content to look like
+// a heading) so a genuine standalone bold/italic line - e.g. "**bold
+// text**" - is left completely alone.
 function unwrapHeadingEmphasis(line: string): string {
   const trimmed = line.trim()
   const wrapped = trimmed.match(/^(\*\*|\*)([\s\S]+)\1$/)
@@ -128,6 +145,9 @@ function unwrapHeadingEmphasis(line: string): string {
 }
 
 function parseMarkdown(content: string) {
+  // Normalize CRLF (some AI providers / streaming paths emit \r\n) so line-start
+  // checks like startsWith("# ") and startsWith("```") behave consistently and
+  // no stray \r ends up rendered inside text or code blocks.
   const lines = content.replace(/\r\n/g, "\n").split("\n")
   const sections: Array<{
     type: "heading" | "paragraph" | "bulletList" | "numberedList" | "blockquote" | "codeBlock"
@@ -140,8 +160,19 @@ function parseMarkdown(content: string) {
 
   let i = 0
   while (i < lines.length) {
+    // Some AI responses "extra emphasize" a heading by wrapping the whole
+    // marker in bold/italic, e.g. "**# Bugs Found**" instead of "# Bugs
+    // Found". Since that line then starts with `*`, not `#`, heading
+    // detection below never fired - it fell through to the paragraph's
+    // bold/italic parser, which matched the *entire* "**# Bugs Found**" as
+    // one bold span and rendered <strong># Bugs Found</strong>: visibly
+    // bold text with the "#" still showing, exactly like the observed bug.
+    // Unwrap that outer emphasis first so the heading marker underneath is
+    // detected normally. Only strips it when what's inside genuinely looks
+    // like a heading, so real standalone bold/italic lines are untouched.
     const line = unwrapHeadingEmphasis(lines[i])
 
+    // Code block
     if (line.startsWith("```")) {
       const language = line.slice(3).trim() || "text"
       const codeLines: string[] = []
@@ -159,6 +190,7 @@ function parseMarkdown(content: string) {
       continue
     }
 
+    // Heading (any level - handles beyond the common #/##/### too)
     const headingMatch = line.match(/^(#{1,6})\s+(.*)$/)
     if (headingMatch) {
       sections.push({ type: "heading", level: headingMatch[1].length, content: headingMatch[2].trim() })
@@ -166,6 +198,7 @@ function parseMarkdown(content: string) {
       continue
     }
 
+    // Blockquote
     if (line.startsWith("> ")) {
       const quoteLines: string[] = []
       while (i < lines.length && lines[i].startsWith("> ")) {
@@ -176,6 +209,7 @@ function parseMarkdown(content: string) {
       continue
     }
 
+    // Bullet list
     if (line.startsWith("- ") || line.startsWith("* ")) {
       const items: string[] = []
       while (i < lines.length && (lines[i].startsWith("- ") || lines[i].startsWith("* "))) {
@@ -186,6 +220,7 @@ function parseMarkdown(content: string) {
       continue
     }
 
+    // Numbered list
     if (/^\d+\.\s/.test(line)) {
       const items: string[] = []
       while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
@@ -196,11 +231,13 @@ function parseMarkdown(content: string) {
       continue
     }
 
+    // Empty line - skip
     if (!line.trim()) {
       i++
       continue
     }
 
+    // Paragraph with inline formatting
     const paragraphLines: string[] = [line]
     i++
     while (i < lines.length && lines[i].trim() &&
@@ -225,6 +262,7 @@ function parseMarkdown(content: string) {
 function parseInlineMarkdown(text: string): Array<{ type: "text" | "bold" | "italic" | "inlineCode"; content: string }> {
   const parts: Array<{ type: "text" | "bold" | "italic" | "inlineCode"; content: string }> = []
   
+  // Split by inline code first
   const codeRegex = /`([^`]+)`/g
   let lastIndex = 0
   let match: RegExpExecArray | null
@@ -239,10 +277,12 @@ function parseInlineMarkdown(text: string): Array<{ type: "text" | "bold" | "ita
   
   if (lastIndex < text.length) {
     const remaining = text.slice(lastIndex)
+    // Now process bold and italic in the remaining text
     const boldItalicParts = parseBoldItalic(remaining)
     parts.push(...boldItalicParts)
   }
   
+  // If no special formatting found, return as text
   if (parts.length === 0) {
     return [{ type: "text", content: text }]
   }
@@ -253,6 +293,7 @@ function parseInlineMarkdown(text: string): Array<{ type: "text" | "bold" | "ita
 function parseBoldItalic(text: string): Array<{ type: "text" | "bold" | "italic" | "inlineCode"; content: string }> {
   const parts: Array<{ type: "text" | "bold" | "italic" | "inlineCode"; content: string }> = []
   
+  // Handle **bold** and *italic* (but not inline code which is already handled)
   const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g
   let lastIndex = 0
   let match: RegExpExecArray | null
@@ -282,7 +323,7 @@ function renderInlineMarkdown(text: string) {
   return (
     <span>
       {parts.map((part, i) => (
-        <React.Fragment key="{i}">
+        <React.Fragment key={i}>
           {part.type === "text" && <span>{part.content}</span>}
           {part.type === "bold" && <strong>{part.content}</strong>}
           {part.type === "italic" && <em>{part.content}</em>}
