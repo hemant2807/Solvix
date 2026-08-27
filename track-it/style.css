@@ -286,7 +286,7 @@
   position:relative;
 }
 
-.leetbuddy-help-btn{
+.Solvix-help-btn{
   background:#7c3aed;
   color:#fff;
   border:none;
@@ -298,11 +298,11 @@
   transition:.2s;
 }
 
-.leetbuddy-help-btn:hover{
+.Solvix-help-btn:hover{
   background:#6d28d9;
 }
 
-.leetbuddy-popup{
+.Solvix-popup{
   width:380px;
   max-height:80vh;
   background:#121212;
@@ -315,7 +315,7 @@
       0 0 0 1px rgba(255,255,255,.04);
 }
 
-.leetbuddy-header{
+.Solvix-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -327,7 +327,7 @@
   border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-.leetbuddy-header span{
+.Solvix-header span{
   display:flex;
   align-items:center;
   gap:8px;
@@ -341,7 +341,7 @@
   font-size:16px;
 }
 
-.leetbuddy-body{
+.Solvix-body{
 display:flex;
 flex-direction:column;
 
@@ -360,7 +360,7 @@ overflow:hidden;
   gap:10px;
 }
 
-.leetbuddy-popup{
+.Solvix-popup{
     display:flex;
     flex-direction:column;
 
@@ -374,7 +374,7 @@ overflow:hidden;
 }
 
 
-.leetbuddy-body button{
+.Solvix-body button{
     background:#1d1d1d;
     color:white;
     border:1px solid #303030;
@@ -386,7 +386,7 @@ overflow:hidden;
     transition:.25s;
 }
 
-.leetbuddy-body button:hover{
+.Solvix-body button:hover{
     background:#7c3aed;
     transform:translateY(-2px);
     border-color:#7c3aed;

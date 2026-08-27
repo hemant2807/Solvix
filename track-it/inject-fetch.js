@@ -1,3 +1,6 @@
+const currentScript = document.currentScript
+const verificationToken = currentScript ? currentScript.getAttribute("data-token") : null
+
 let attempts = 0
 let accepted = false
 
@@ -21,6 +24,7 @@ window.fetch = async (...args) => {
       window.dispatchEvent(
         new CustomEvent("leetcode-verdict", {
           detail: {
+            token: verificationToken,
             source: url.includes("/check")
               ? "check"
               : url.includes("/submit")
@@ -59,6 +63,7 @@ XMLHttpRequest.prototype.open = function (method, url, ...rest) {
         window.dispatchEvent(
           new CustomEvent("leetcode-verdict", {
             detail: {
+              token: verificationToken,
               source: url.includes("/check")
                 ? "check"
                 : url.includes("/submit")

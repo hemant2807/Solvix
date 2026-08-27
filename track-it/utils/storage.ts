@@ -1,9 +1,9 @@
 export const CHROME_STORAGE_KEYS = {
   LEETCODE_USER: "leetcodeUser",
-  AI_CHAT_HISTORY: "leetbuddy.ai_chat_history",
-  AI_LAST_CONTEXT: "leetbuddy.ai_last_context",
-  SELECTED_SHEET: "leetbuddy.selected_sheet",
-  DAILY_GOAL: "leetbuddy.daily_goal"
+  AI_CHAT_HISTORY: "Solvix.ai_chat_history",
+  AI_LAST_CONTEXT: "Solvix.ai_last_context",
+  SELECTED_SHEET: "Solvix.selected_sheet",
+  DAILY_GOAL: "Solvix.daily_goal"
 } as const;
 
 export async function readChromeStorage<T>(key: string, fallback: T): Promise<T> {
