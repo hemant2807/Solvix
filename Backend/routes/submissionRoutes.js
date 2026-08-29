@@ -5,10 +5,12 @@ const {
   getUserSubmissions,
   getSubmissionStats,
   getAvailableMonths,
-  getHeatmapData
+  getHeatmapData,
+  getLeaderboard
 } = require("../controllers/submissionController");
 
 router.post("/", createSubmission);
+router.get("/leaderboard", getLeaderboard);
 router.get("/user/:username", getUserSubmissions);
 router.get("/user/:username/stats", getSubmissionStats);
 router.get("/user/:username/months", getAvailableMonths);

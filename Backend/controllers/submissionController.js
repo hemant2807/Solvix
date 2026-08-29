@@ -93,6 +93,18 @@ const getSubmissionStats = async (req, res) => {
       }
     ]);
 
+    const defaultStats = {
+      totalSubmissions: 0,
+      totalTime: 0,
+      avgTime: 0,
+      avgAttempts: 0,
+      topicCounts: {}
+    };
+
+    if (!stats || stats.length === 0) {
+      return res.json(defaultStats);
+    }
+
     // Flatten topics and count
     const topicCounts = {};
     if (stats[0]?.allTopics) {
@@ -102,7 +114,10 @@ const getSubmissionStats = async (req, res) => {
     }
 
     res.json({
-      ...stats[0],
+      totalSubmissions: stats[0]?.totalSubmissions || 0,
+      totalTime: stats[0]?.totalTime || 0,
+      avgTime: stats[0]?.avgTime || 0,
+      avgAttempts: stats[0]?.avgAttempts || 0,
       topicCounts
     });
   } catch (error) {
@@ -164,7 +179,8 @@ const getHeatmapData = async (req, res) => {
           _id: {
             $dateToString: { format: "%Y-%m-%d", date: "$submittedAt" }
           },
-          count: { $sum: 1 }
+          count: { $sum: 1 },
+          timeSpent: { $sum: "$timeSpent" }
         }
       },
       { $sort: { _id: 1 } }
@@ -173,11 +189,129 @@ const getHeatmapData = async (req, res) => {
     res.json(
       buckets.map((bucket) => ({
         date: bucket._id,
-        count: bucket.count
+        count: bucket.count,
+        timeSpent: bucket.timeSpent || 0
       }))
     );
   } catch (error) {
     console.error("Error fetching heatmap data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getLeaderboard = async (req, res) => {
+  try {
+    const leaderboardPipeline = [
+      {
+        $project: {
+          _id: 0,
+          username: "$username",
+          avatar: { $ifNull: ["$avatar", ""] }
+        }
+      },
+      {
+        $unionWith: {
+          coll: "submissions",
+          pipeline: [
+            { $match: { verdict: "Accepted", username: { $exists: true, $ne: "" } } },
+            { $group: { _id: "$username" } },
+            { $project: { _id: 0, username: "$_id", avatar: "" } }
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: "$username",
+          avatar: { $max: "$avatar" }
+        }
+      },
+      {
+        $lookup: {
+          from: "submissions",
+          let: { uName: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$username", "$$uName"] },
+                    { $eq: ["$verdict", "Accepted"] }
+                  ]
+                }
+              }
+            },
+            {
+              $group: {
+                _id: "$questionName",
+                difficulty: { $first: "$difficulty" }
+              }
+            }
+          ],
+          as: "solvedQuestions"
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          username: "$_id",
+          avatar: { $ifNull: ["$avatar", ""] },
+          solved: { $size: "$solvedQuestions" },
+          hard: {
+            $size: {
+              $filter: {
+                input: "$solvedQuestions",
+                as: "q",
+                cond: { $eq: ["$$q.difficulty", "Hard"] }
+              }
+            }
+          },
+          medium: {
+            $size: {
+              $filter: {
+                input: "$solvedQuestions",
+                as: "q",
+                cond: { $eq: ["$$q.difficulty", "Medium"] }
+              }
+            }
+          },
+          easy: {
+            $size: {
+              $filter: {
+                input: "$solvedQuestions",
+                as: "q",
+                cond: { $eq: ["$$q.difficulty", "Easy"] }
+              }
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          solved: -1,
+          hard: -1,
+          medium: -1,
+          easy: -1,
+          username: 1
+        }
+      }
+    ];
+
+    const User = require("../models/User");
+    const results = await User.aggregate(leaderboardPipeline);
+
+    const ranked = results.map((item, index) => ({
+      rank: index + 1,
+      username: item.username,
+      avatar: item.avatar || "",
+      solved: item.solved || 0,
+      hard: item.hard || 0,
+      medium: item.medium || 0,
+      easy: item.easy || 0
+    }));
+
+    res.json(ranked);
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -187,5 +321,6 @@ module.exports = {
   getUserSubmissions,
   getSubmissionStats,
   getAvailableMonths,
-  getHeatmapData
+  getHeatmapData,
+  getLeaderboard
 };

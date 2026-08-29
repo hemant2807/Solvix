@@ -15,6 +15,7 @@ import { TodaysFocusCard } from './TodaysFocusCard';
 import { QuickActionsBar } from './QuickActionsBar';
 import { DashboardWidgets } from './DashboardWidgets';
 import { AdvancedStats } from './AdvancedStats';
+import { LeaderboardCard } from './LeaderboardCard';
 import type { DailyGoal, WeeklyActivityDay, FocusProblem } from './types';
 import { formatSecondsToHMS } from '../../utils/time';
 import { apiUrl } from '../../constants/api';
@@ -353,6 +354,9 @@ export const ProductivityDashboard: React.FC<ProductivityDashboardProps> = ({
         focusProblem={focusProblem}
         onStartPractice={handleQuickContinue}
       />
+
+      {/* FEATURE: STUDENT LEADERBOARD */}
+      <LeaderboardCard currentUsername={username} />
 
       {/* FEATURE 3: WEEKLY PROGRESS SUMMARY */}
       <WeeklyProgressSummary
