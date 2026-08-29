@@ -201,7 +201,16 @@ const getHeatmapData = async (req, res) => {
 
 const getLeaderboard = async (req, res) => {
   try {
+    // Parse and validate the `days` query param. Allowed: 7, 15, 30. Default: 7.
+    const ALLOWED_DAYS = [7, 15, 30];
+    const rawDays = parseInt(req.query.days, 10);
+    const days = ALLOWED_DAYS.includes(rawDays) ? rawDays : 7;
+
+    // Rolling window start date (calculated on the server so the client cannot tamper)
+    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
     const leaderboardPipeline = [
+      // ── Step 1: Seed the pipeline with every registered user ──────────────────
       {
         $project: {
           _id: 0,
@@ -209,38 +218,51 @@ const getLeaderboard = async (req, res) => {
           avatar: { $ifNull: ["$avatar", ""] }
         }
       },
+      // ── Step 2: Union with any username that has an Accepted sub (ever) ───────
+      // This ensures users who solved something before the window but are not
+      // yet registered (edge case) still get included; avatar defaults to "".
       {
         $unionWith: {
           coll: "submissions",
           pipeline: [
-            { $match: { verdict: "Accepted", username: { $exists: true, $ne: "" } } },
+            {
+              $match: {
+                verdict: "Accepted",
+                username: { $exists: true, $ne: "" }
+              }
+            },
             { $group: { _id: "$username" } },
             { $project: { _id: 0, username: "$_id", avatar: "" } }
           ]
         }
       },
+      // ── Step 3: Deduplicate users, keeping the best (non-empty) avatar ────────
       {
         $group: {
           _id: "$username",
           avatar: { $max: "$avatar" }
         }
       },
+      // ── Step 4: Lookup UNIQUE questions solved in the selected time window ────
       {
         $lookup: {
           from: "submissions",
           let: { uName: "$_id" },
           pipeline: [
             {
+              // Filter: correct user + Accepted + within rolling window
               $match: {
                 $expr: {
                   $and: [
                     { $eq: ["$username", "$$uName"] },
-                    { $eq: ["$verdict", "Accepted"] }
+                    { $eq: ["$verdict", "Accepted"] },
+                    { $gte: ["$submittedAt", startDate] }
                   ]
                 }
               }
             },
             {
+              // Deduplicate by questionName → each unique question counted once
               $group: {
                 _id: "$questionName",
                 difficulty: { $first: "$difficulty" }
@@ -250,6 +272,7 @@ const getLeaderboard = async (req, res) => {
           as: "solvedQuestions"
         }
       },
+      // ── Step 5: Project counts ─────────────────────────────────────────────────
       {
         $project: {
           _id: 0,
@@ -285,6 +308,7 @@ const getLeaderboard = async (req, res) => {
           }
         }
       },
+      // ── Step 6: Sort by ranking priority ─────────────────────────────────────
       {
         $sort: {
           solved: -1,
@@ -323,4 +347,4 @@ module.exports = {
   getAvailableMonths,
   getHeatmapData,
   getLeaderboard
-};
+};
