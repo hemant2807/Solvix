@@ -1737,6 +1737,42 @@ light-preview .dashboard-preview-mock [class*="bg-[#090d18]"] {
     gap: 9px;
     margin-top: 62px;
   }
+  /* Mobile responsive fix for card-footer and preview elements */
+  .card-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card-footer span:last-child {
+    flex-basis: 100%;
+    text-align: left;
+  }
+  .accepted {
+    width: 100%;
+  }
+  .preview-topline {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .preview-topline > span:last-child {
+    flex-basis: 100%;
+  }
+  /* Make preview shells more compact on mobile */
+  .preview-shell {
+    min-height: 280px;
+  }
+  .problem-card {
+    min-height: auto;
+  }
+  .code-lines {
+    padding-top: 12px;
+  }
+  .card-top {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card-top span:last-child {
+    flex-basis: 100%;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   html {
