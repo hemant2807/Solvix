@@ -95,7 +95,7 @@ export const ScreenshotPreview: React.FC<ScreenshotPreviewProps> = ({
           <div className="platform-preview-mock w-full mx-auto bg-[#0d1324] rounded-2xl border border-gray-800 shadow-2xl p-3 sm:p-5 text-left flex flex-col justify-between">
             <h4 className="text-xs font-bold text-brandPurple uppercase tracking-wider mb-3 sm:mb-4 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-brandPurple animate-pulse flex-shrink-0" />
-              <span className="truncate">Similar Questions Across Platforms</span>
+              <span className="whitespace-normal leading-tight">Similar Questions Across Platforms</span>
             </h4>
             <div className="space-y-2 sm:space-y-3">
               {[

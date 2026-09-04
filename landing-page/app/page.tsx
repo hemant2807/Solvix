@@ -809,6 +809,10 @@ export default function Home() {
               <a href="mailto:hemant.k2807@gmail.com">Contact</a>
               <a href="#footer">Updates</a>
             </div>
+            <div>
+              <span className="eyebrow">Legal</span>
+              <a href="/privacy-policy" className="hover:text-[var(--ink)] transition-colors">Privacy Policy</a>
+            </div>
           </div>
           
         </div>
