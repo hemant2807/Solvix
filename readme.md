@@ -1,127 +1,326 @@
-# Solvix
+<div align="center">
 
-Solvix is an AI-powered Chrome Extension for LeetCode that combines coding practice, submission tracking, AI assistance, progress analytics, and GitHub solution synchronization in one workflow.
+# 🚀 Solvix
 
-# 1. Features
+### Your AI-powered LeetCode companion
 
-Track LeetCode submissions, attempts, streaks, and progress.
+**Practice smarter. Get unstuck faster. Track your progress. Sync your solutions.**
 
-AI assistance for explanations, hints, code optimization, bug finding, and solutions.
+[![Website](https://img.shields.io/badge/Website-Solvix-000000?logo=vercel&logoColor=white)](https://solvix-rouge.vercel.app/)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome-Web%20Store-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/solvix/hclcapmhleolhlomnncjekmollipipoi)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![AI](https://img.shields.io/badge/AI-Groq%20%7C%20Gemini-orange)](https://console.groq.com/)
+[![Made with](https://img.shields.io/badge/Built%20with-Plasmo%20%7C%20React%20%7C%20Node.js-informational)](#-tech-stack)
 
-Practice using curated problem sheets such as Blind 75, NeetCode 150, and Striver SDE.
+<p>
+  <a href="https://solvix.hemant28.me/"><b>🌐 Website</b></a> ·
+  <a href="https://github.com/mangalam-srv/Solvix"><b>💻 GitHub</b></a> ·
+  <a href="docs/DOCUMENTATION.md"><b>📖 Documentation</b></a> ·
+  <a href="https://leetcode.com/"><b>🧑‍💻 LeetCode</b></a>
+</p>
 
-Automatically detect and track LeetCode submission verdicts.
+</div>
 
-Sync accepted solutions with GitHub.
+---
 
-View practice statistics and topic-based analytics.
+## 💡 What is Solvix?
 
-Find alternative resources for supported problems.
+**Solvix** is an AI-powered Chrome Extension that makes LeetCode practice structured, productive, and measurable.
 
+Developers normally juggle LeetCode, problem sheets, AI assistants, analytics tools, external resources, and GitHub — all in separate tabs. **Solvix merges all of that into one experience, right next to your LeetCode editor.**
 
+<div align="center">
 
-# 2. Getting Started
+| 🤖 AI Help | 📚 Structured Sheets | 📊 Progress Tracking | 🐙 GitHub Sync | 📧 Reports |
+|:---:|:---:|:---:|:---:|:---:|
+| Hints, bugs, solutions | Blind 75, NeetCode 150+ | Streaks & analytics | Auto-push accepted code | Daily/weekly digests |
 
-2.1 Install Solvix
+</div>
 
-Visit the Solvix website.
+---
 
-Click Add to Chrome.
+## ✨ Features
 
-Chrome will open the Solvix Chrome Web Store page.
+### 🤖 AI Coding Assistant
+Get contextual help without ever leaving LeetCode:
 
-Click Add to Chrome and then Add Extension.
+- 💡 Incremental hints  
+- 📖 Problem explanations  
+- 🐛 Bug detection  
+- ⚡ Code optimization  
+- 🧠 Algorithm walkthroughs  
+- 💻 Complete solutions  
+- 🔍 Alternative approaches  
 
-Open LeetCode and log in to your account.
+The AI workspace uses the current problem statement, your code, and conversation context to give sharper, more relevant help. Powered by **Groq** and **Google Gemini**.
 
-Open the Solvix extension from the Chrome toolbar or Chrome Side Panel.
+### 📚 Structured DSA Practice
+Practice via popular roadmaps, without a separate spreadsheet or Notion doc:
 
-2.2 Generate a Free Groq API Key
+- **Blind 75**
+- **NeetCode 150**
+- **Love Babbar 450**
+- **Striver SDE**
+- **Striver A2Z**
 
-Solvix uses the Groq API for its AI features. Groq provides a Free Tier with usage limits.
+### 📊 Submission & Progress Tracking
+Automatically tracked, always up to date:
 
-Visit the Groq Console.
+`Verdicts` · `Attempts` · `Time spent` · `Problems solved` · `Streaks` · `Difficulty mix` · `Topic coverage` · `Languages used` · `Consistency`
 
-Sign in or create a Groq account.
+### 📈 Interview Readiness & Analytics
+Beyond a solved-problem counter — know **what to practice next**:
 
-Open API Keys.
+- Topic-wise performance & weak areas  
+- Difficulty distribution  
+- Practice consistency & average attempts  
+- Time-spent trends  
+- Overall interview readiness score  
 
-Click Create API Key.
+### 🐙 GitHub Solution Sync
+Every accepted solution, automatically centralized — see the [flow](#-github-sync-flow) below.
 
-Enter a name for the key and create it.
+### 🔎 Alternative Problem Resources
+When a problem is locked or unavailable on LeetCode, Solvix can surface equivalents on:
 
-Copy the generated API key.
+`GeeksforGeeks` · `Codeforces` · `HackerRank` · `CodeChef`
 
-Open the Solvix Side Panel.
+### 📧 Progress Reports & Reminders
+Daily progress · Weekly summaries · Monthly reports · Topic breakdowns · Streak alerts
 
-Paste the key into the Groq API Key field.
+---
 
-Save or confirm the key and start using the AI features.
+## 🔄 GitHub Sync Flow
 
-The Free Tier is subject to Groq's current rate and usage limits.
+![LeetCode → GitHub Automation Flow](public/flowchart.jpeg)
 
-Security: Never share your API key or commit it to a public repository.
+Solvix automatically detects an accepted verdict, processes the solution, and pushes it straight to your GitHub repo — no manual copy-pasting after every problem.
 
-2.3 Start Practicing
+---
 
-Open any LeetCode problem.
+## 🏗️ Architecture
 
-Solvix automatically detects the current problem.
+```mermaid
+flowchart TB
+    U(["🧑 User"]) --> LC["🧩 LeetCode"]
+    LC --> EXT
 
-Use the Side Panel to track your practice and access AI assistance.
+    subgraph EXT["🖥️ Chrome Extension"]
+        direction TB
+        CS["📜 Content Script"]
+        SP["📊 Side Panel"]
+        BG["⚙️ Background Service"]
+        UI["⚛️ React UI"]
+    end
 
-Ask for an explanation, hint, optimization, bug analysis, or solution when required.
+    EXT -- "HTTP / API" --> API
 
-Submit your solution on LeetCode normally.
+    subgraph API["🌐 Node.js Backend"]
+        direction TB
+        EX["🚏 Express API"]
+        CT["🎛️ Controllers"]
+        SV["🔧 Services"]
+    end
 
-Solvix records the submission and updates your progress.
+    API --> DB[("🗄️ MongoDB")]
+    API --> AI["🤖 AI APIs (Groq · Gemini)"]
+    API --> GH["🐙 GitHub API"]
 
-If GitHub is connected, accepted solutions can be synchronized with your repository.
+    style U fill:#e8f0fe,stroke:#4285F4
+    style LC fill:#ffe9b3,stroke:#f4b400
+    style DB fill:#e6f4ea,stroke:#34a853
+    style AI fill:#fce8e6,stroke:#ea4335
+    style GH fill:#181717,color:#fff
+```
 
+👉 For the full internal application flow, see the **[Technical Documentation](docs/DOCUMENTATION.md)**.
 
+---
 
-# 3. Documentation
+## 🛠️ Tech Stack
 
-For complete technical documentation covering the architecture, project structure, application flow, backend, database, AI integration, authentication, components, APIs, debugging, and development workflow, see:
+<table>
+<tr>
+<td valign="top" width="25%">
 
-Read the Complete Documentation 
+**🧩 Chrome Extension**
+- Plasmo
+- React
+- TypeScript
+- Tailwind CSS
+- Chrome Extension APIs
+- Monaco Editor
 
+</td>
+<td valign="top" width="25%">
 
+**⚙️ Backend**
+- Node.js
+- Express.js
+- Mongoose
 
-# 4. Developer Setup
+</td>
+<td valign="top" width="25%">
 
-4.1 Requirements
+**🗄️ Database**
+- MongoDB
 
-Node.js
+**🤖 AI**
+- Google Gemini
+- Groq
 
-MongoDB
+</td>
+<td valign="top" width="25%">
 
-Groq API key
+**🔌 Integrations**
+- GitHub API
+- LeetCode
+- Nodemailer
+- QuickChart
+- node-cron
 
-GitHub OAuth credentials for GitHub synchronization
+</td>
+</tr>
+</table>
 
-4.2 Run Locally
+---
 
-# Backend
+## 🚀 Getting Started
+
+### 👤 For Users
+
+1. Visit **[solvix-rouge.vercel.app](https://solvix-rouge.vercel.app/)**
+2. Install the Chrome Extension
+3. Log in to LeetCode
+4. Open the Solvix side panel
+5. Configure your AI provider/API key (if required)
+6. Open a problem → **start practicing** 🎯
+
+### 🤖 Configure Groq AI
+
+| Step | Action |
+|:---:|---|
+| 1 | Visit the [Groq Console](https://console.groq.com/) |
+| 2 | Sign in or create an account |
+| 3 | Open **API Keys** |
+| 4 | Create a new API key |
+| 5 | Copy the generated key |
+| 6 | Open the Solvix Side Panel → AI/API settings → paste key |
+
+> ⚠️ **Never commit your API key to GitHub or share it publicly.** Usage is subject to Groq's current API limits and policies.
+
+---
+
+## 🧑‍💻 Developer Setup
+
+### Requirements
+`Node.js` · `npm` · `MongoDB` · `Git` · `Groq/Gemini API credentials` · `GitHub OAuth credentials`
+
+### Clone the Repository
+```bash
+git clone https://github.com/mangalam-srv/Solvix.git
+cd Solvix
+```
+
+### Backend
+```bash
 cd Backend
 npm install
 npm run dev
+```
 
-# Extension
+Create a `.env` file inside `Backend/`:
+```env
+PORT=4000
+MONGO_URI=your_mongodb_connection_string
+
+GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+
+EMAIL_USER=your_email
+EMAIL_PASS=your_email_password
+
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
+> Never commit `.env` files or credentials to the repository.
+
+### Chrome Extension
+```bash
 cd track-it
 npm install
 npm run dev
+```
 
-For Chrome extension development, open chrome://extensions, enable Developer mode, and load the generated extension build.
+Then open `chrome://extensions/` → enable **Developer mode** → **Load unpacked** → select:
+```text
+track-it/build/chrome-mv3-dev
+```
+Open LeetCode and launch the Solvix side panel. ✅
 
+---
 
+## 📖 Documentation
 
-# 5. Links
+Full technical docs cover architecture, folder structure, file-by-file and function-by-function explanations, data flow, API reference, database models, AI integration, auth & security, and a beginner learning roadmap.
 
-Website: https://solvix-rouge.vercel.app/
+👉 **[Read the Complete Documentation](docs/DOCUMENTATION.md)**
 
-GitHub: https://github.com/mangalam-srv/Solvix
+---
 
-Groq Console: https://console.groq.com/
+## 🤝 Contributing
 
-LeetCode: https://leetcode.com/
+```bash
+git checkout -b feature/your-feature
+```
+
+Make your changes, test locally, and open a Pull Request. For larger changes, please open an issue first to discuss the approach.
+
+## 🐛 Found a Bug?
+
+Open a GitHub Issue with:
+- A clear description
+- Steps to reproduce
+- Expected vs. actual behavior
+- Screenshots/logs when applicable
+
+## 🔐 Security
+
+**Never commit:** API keys · OAuth secrets · DB credentials · Email passwords · Access tokens · `.env` files
+
+If you discover a vulnerability, please avoid posting sensitive details publicly — contact the maintainers privately instead.
+
+## 📌 Roadmap
+
+- [ ] More DSA problem sheets
+- [ ] More AI providers
+- [ ] Enhanced performance analytics
+- [ ] More GitHub customization
+- [ ] Improved recommendation engine
+- [ ] Additional coding platforms
+- [ ] More personalized practice plans
+
+## 🔗 Links
+
+| Resource | Link |
+|---|---|
+| 🌐 Website | https://solvix-rouge.vercel.app/ |
+| 💻 GitHub | https://github.com/mangalam-srv/Solvix |
+| 📖 Documentation | [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) |
+| 🤖 Groq | https://console.groq.com/ |
+| 🧑‍💻 LeetCode | https://leetcode.com/ |
+
+## 📄 License
+
+Solvix is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+### 🚀 Solvix
+**Practice smarter. Solve better. Build consistently.**
+
+Made with ❤️ for developers preparing for technical interviews.
+
+</div>
