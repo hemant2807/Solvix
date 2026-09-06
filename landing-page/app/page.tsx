@@ -406,7 +406,7 @@ export default function Home() {
         <div className="nav-actions">
           <button
             className="dark-button small-button"
-            onClick={() => openRepository(projectRepositoryUrl)}
+            onClick={() => openRepository(projectUrl)}
           >
             Get started <ArrowRight size={20} />
           </button>
