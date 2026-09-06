@@ -1,6 +1,6 @@
-# Solvix  Master Project Documentation & Learning Guide
+# Solvix Master Project Documentation & Learning Guide
 
-Welcome to the Master README for **Solvix** . This document serves as a comprehensive, technically rigorous, and beginner-friendly learning guide for the entire codebase. It is designed to allow any developer or AI agent to understand, run, debug, and extend this project from scratch.
+Welcome to the Master README for **Solvix**. This document serves as a comprehensive, technically rigorous, and beginner-friendly learning guide for the entire codebase. It is designed to allow any developer or AI agent to understand, run, debug, and extend this project from scratch.
 
 ---
 
@@ -40,7 +40,7 @@ Welcome to the Master README for **Solvix** . This document serves as a comprehe
 
 ## 1. Project Overview
 
-### What is Solvix ?
+### What is Solvix?
 **Solvix** is an AI-powered coding assistant and practice tracker designed specifically for LeetCode. It exists to solve the fragmentation problem in competitive programming prep: developers typically have to jump between LeetCode (solving problems), Excel or Notion (tracking lists like Blind 75/NeetCode 150), external explanation resources (YouTube/GeeksforGeeks), separate code repos (for pushing solutions to GitHub), and ChatGPT (for debugging or explanations).
 
 Solvix consolidates all of these resources directly into a Chrome Extension side panel and popup overlay, linked to a custom Node.js/Express backend, MongoDB database, and LLMs (Google Gemini/Groq).
@@ -243,25 +243,25 @@ Solvix/
 ## 5. Function-by-Function Documentation
 
 ### `callAI(prompt)`
-- **File**: [`Backend/server.js`](file:///c:/Users/manga/Solvix/Backend/server.js#L60-L130)
+- **File**: [`Backend/server.js`](https://github.com/mangalam-srv/Solvix/blob/main/Backend/server.js#L60-L130)
 - **Called by**: Express POST endpoints (`/api/ask-ai` and `/api/ai-assistant`).
 - **Arguments**: `prompt` string.
 - **Details**: Checks the `AI_PROVIDER` environment variable. If set to `"groq"`, it sends the prompt to the Groq Chat Completions endpoint. If configured as `"gemini"` (default), it makes a POST request to the Gemini API endpoint. It extracts the generated text response and returns it.
 
 ### `setQuestionVerdict(req, res)`
-- **File**: [`Backend/controllers/sessionController.js`](file:///c:/Users/manga/Solvix/Backend/controllers/sessionController.js#L6-L31)
+- **File**: [`Backend/controllers/sessionController.js`](https://github.com/mangalam-srv/Solvix/blob/main/Backend/controllers/sessionController.js#L6-L31)
 - **Called by**: Route endpoint (`PUT /api/sessions/:sessionId/questions/:questionId/verdict`).
 - **Arguments**: `req` (containing parameters and body details) and `res`.
 - **Details**: Locates the session by ID. If found, it updates the question sub-document's execution status. If the verdict is `"Accepted"`, it sets `completed` to `true` and saves the updated session to the database.
 
 ### `exchangeCodeForToken(code, clientId, ...)`
-- **File**: [`Backend/services/githubService.js`](file:///c:/Users/manga/Solvix/Backend/services/githubService.js#L12-L36)
+- **File**: [`Backend/services/githubService.js`](https://github.com/mangalam-srv/Solvix/blob/main/Backend/services/githubService.js#L12-L36)
 - **Called by**: Route endpoint (`POST /api/github/exchange`).
 - **Arguments**: OAuth authentication code, client ID, client secret, and redirect URI.
 - **Details**: Sends a request to `https://github.com/login/oauth/access_token`. If successful, it parses the JSON response and returns the `access_token`.
 
 ### `sendReminderEmail(user)`
-- **File**: [`Backend/services/reminderScheduler.js`](file:///c:/Users/manga/Solvix/Backend/services/reminderScheduler.js#L164-L208)
+- **File**: [`Backend/services/reminderScheduler.js`](https://github.com/mangalam-srv/Solvix/blob/main/Backend/services/reminderScheduler.js#L164-L208)
 - **Called by**: `checkAndSendReminders()`.
 - **Arguments**: User mongoose model object.
 - **Details**: Checks if the user has enabled practice reminders. It generates a personalized email template containing their current streak and focus topics. It then sends the email using Nodemailer.
@@ -617,24 +617,24 @@ IndexSidePanel (sidepanel.tsx)
 1. Open the `/Backend` directory.
 2. Create a `.env` file and populate it with your database and API keys.
 3. Install dependencies:
-   ```bash
+```bash
    npm install
-   ```
+```
 4. Run the development server:
-   ```bash
+```bash
    npm run dev
-   ```
+```
 
 ### Chrome Extension Setup
 1. Open the `/track-it` directory.
 2. Install dependencies:
-   ```bash
+```bash
    npm install
-   ```
+```
 3. Start the Plasmo development server:
-   ```bash
+```bash
    npm run dev
-   ```
+```
 4. Open Google Chrome and navigate to `chrome://extensions/`.
 5. Enable **Developer mode** (toggle in top right).
 6. Click **Load unpacked** and select the `/track-it/build/chrome-mv3-dev` directory.
