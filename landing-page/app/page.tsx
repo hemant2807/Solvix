@@ -106,6 +106,7 @@ const marqueeItems = [
 
 const sourceRepositoryUrl = "https://github.com/mangalam-srv/Solvix";
 const projectRepositoryUrl = "https://github.com/hemant2807/Solvix";
+const projectUrl = "https://chromewebstore.google.com/detail/solvix/hclcapmhleolhlomnncjekmollipipoi?utm_source=chatgpt.com";
 
 function Mark() {
   return (
@@ -437,7 +438,7 @@ export default function Home() {
           <div className="hero-actions">
             <button
               className="dark-button"
-              onClick={() => openRepository(sourceRepositoryUrl)}
+              onClick={() => openRepository(projectUrl)}
             >
               <Chrome size={20} /> Add to Browser - Free <ArrowRight size={20} />
             </button>
@@ -770,7 +771,7 @@ export default function Home() {
         <p>
           One problem. One session. One clearer view of where you are going.
         </p>
-        <button className="light-button" onClick={() => openRepository(projectRepositoryUrl)}>
+        <button className="light-button" onClick={() => openRepository(projectUrl)}>
           Begin with Solvix <ArrowRight size={16} />
         </button>
       </section>
