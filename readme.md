@@ -92,7 +92,7 @@ Daily progress · Weekly summaries · Monthly reports · Topic breakdowns · Str
 
 ## 🔄 GitHub Sync Flow
 
-![LeetCode → GitHub Automation Flow](public/flowchart.jpeg)
+![LeetCode → GitHub Automation Flow](landing-page/public/flowchart.jpeg)
 
 Solvix automatically detects an accepted verdict, processes the solution, and pushes it straight to your GitHub repo — no manual copy-pasting after every problem.
 
@@ -133,7 +133,7 @@ flowchart TB
     style GH fill:#181717,color:#fff
 ```
 
-👉 For the full internal application flow, see the **[Technical Documentation](docs/DOCUMENTATION.md)**.
+👉 For the full internal application flow, see the **[Technical Documentation](landing-page/docs/DOCUMENTATION.md)**.
 
 ---
 
@@ -189,7 +189,7 @@ flowchart TB
 
 ### 👤 For Users
 
-1. Visit **[solvix-rouge.vercel.app](https://solvix-rouge.vercel.app/)**
+1. Visit **[solvix.hemant28.me](https://solvix.hemant28.me/)**
 2. Install the Chrome Extension
 3. Log in to LeetCode
 4. Open the Solvix side panel
@@ -264,7 +264,7 @@ Open LeetCode and launch the Solvix side panel. ✅
 
 Full technical docs cover architecture, folder structure, file-by-file and function-by-function explanations, data flow, API reference, database models, AI integration, auth & security, and a beginner learning roadmap.
 
-👉 **[Read the Complete Documentation](docs/DOCUMENTATION.md)**
+👉 **[Read the Complete Documentation](landing-page/docs/DOCUMENTATION.md)**
 
 ---
 
