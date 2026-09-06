@@ -436,19 +436,25 @@ export default function Home() {
             system for getting better at the work that matters.
           </p>
           <div className="hero-actions">
-            <button
-              className="dark-button"
-              onClick={() => openRepository(projectUrl)}
-            >
-              <Chrome size={20} /> Add to Browser - Free <ArrowRight size={20} />
-            </button>
-            <button
-              className="text-button"
-              onClick={() => openRepository(sourceRepositoryUrl)}
-            >
-              <Github size={20} /> View Source on GitHub <ArrowRight size={20} />
-            </button>
-          </div>
+  <button
+    className="dark-button"
+    onClick={() => openRepository(projectUrl)}
+  >
+    <Chrome size={20} /> Add to Browser - Free <ArrowRight size={20} />
+  </button>
+
+  <button
+    className="text-button"
+    onClick={() => openRepository(sourceRepositoryUrl)}
+  >
+    <Github size={20} /> View Source on GitHub <ArrowRight size={20} />
+  </button>
+</div>
+
+<p className="installation-note">
+  For installation, use a personal Google account. Organization-managed
+  accounts may not have Chrome Web Store access.
+</p>
           {/* <div className="hero-meta">
             <div className="avatar-stack">
               <span>AR</span>
