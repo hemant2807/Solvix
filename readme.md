@@ -4,11 +4,11 @@
 
 ### Your AI-powered LeetCode companion
 
-**Practice smarter. Get unstuck faster. Track your progress. Sync your solutions.**
+**Practice smarter. Get unstuck faster. Track your progress.    Sync your solutions.**
 
 [![Website](https://img.shields.io/badge/Website-Solvix-000000?logo=vercel&logoColor=white)](https://solvix-rouge.vercel.app/)
 [![Chrome Web Store](https://img.shields.io/badge/Chrome-Web%20Store-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/solvix/hclcapmhleolhlomnncjekmollipipoi)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](landing-page/LICENSE.md)
 [![AI](https://img.shields.io/badge/AI-Groq%20%7C%20Gemini-orange)](https://console.groq.com/)
 [![Made with](https://img.shields.io/badge/Built%20with-Plasmo%20%7C%20React%20%7C%20Node.js-informational)](#-tech-stack)
 
@@ -306,13 +306,13 @@ If you discover a vulnerability, please avoid posting sensitive details publicly
 |---|---|
 | 🌐 Website | https://solvix-rouge.vercel.app/ |
 | 💻 GitHub | https://github.com/mangalam-srv/Solvix |
-| 📖 Documentation | [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) |
+| 📖 Documentation | [docs/DOCUMENTATION.md](landing-page/docs/DOCUMENTATION.md) |
 | 🤖 Groq | https://console.groq.com/ |
 | 🧑‍💻 LeetCode | https://leetcode.com/ |
 
 ## 📄 License
 
-Solvix is licensed under the **MIT License** — see [landing-page/LICENSE.md](LICENSE) for details.
+Solvix is licensed under the **MIT License** — see [LICENSE](landing-page/LICENSE.md) for details.
 
 ---
 
