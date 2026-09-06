@@ -37,7 +37,7 @@ export default function LeetCodeLogin({ onLogin }: Props) {
             <Sparkles className="text-black" size={30} />
           </div>
           <h1 className="text-3xl font-extrabold text-white">
-            Leet<span className="text-yellow-400">Buddy</span>
+            Solvix 
           </h1>
           <p className="text-gray-400 mt-2 text-sm leading-relaxed">
             Your AI-powered LeetCode practice tracker — sheets, sessions, analytics and an AI
