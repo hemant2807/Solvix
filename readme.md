@@ -15,7 +15,7 @@
 <p>
   <a href="https://solvix.hemant28.me/"><b>🌐 Website</b></a> ·
   <a href="https://github.com/mangalam-srv/Solvix"><b>💻 GitHub</b></a> ·
-  <a href="docs/DOCUMENTATION.md"><b>📖 Documentation</b></a> ·
+  <a href="landing-page/docs/DOCUMENTATION.md"><b>📖 Documentation</b></a> ·
   <a href="https://leetcode.com/"><b>🧑‍💻 LeetCode</b></a>
 </p>
 
@@ -312,7 +312,7 @@ If you discover a vulnerability, please avoid posting sensitive details publicly
 
 ## 📄 License
 
-Solvix is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+Solvix is licensed under the **MIT License** — see [landing-page/LICENSE.md](LICENSE) for details.
 
 ---
 
