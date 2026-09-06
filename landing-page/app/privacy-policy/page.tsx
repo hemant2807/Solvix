@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
             </div>
             <div>
               <span className="eyebrow">Connect</span>
-              <a href="https://github.com/mangalam-srv/Solvix" target="_blank" rel="noreferrer" className="hover:text-[var(--ink)] transition-colors">GitHub</a>
+              <a href="https://github.com/hemant2807/Solvix" target="_blank" rel="noreferrer" className="hover:text-[var(--ink)] transition-colors">GitHub</a>
               <a href="mailto:hemant.k2807@gmail.com" className="hover:text-[var(--ink)] transition-colors">Contact</a>
               <a href="/#footer" className="hover:text-[var(--ink)] transition-colors">Updates</a>
             </div>
