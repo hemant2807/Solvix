@@ -118,7 +118,7 @@ For Chrome extension development, open chrome://extensions, enable Developer mod
 
 # 5. Links
 
-Website: https://solvix.hemant28.me/
+Website: https://solvix-rouge.vercel.app/
 
 GitHub: https://github.com/mangalam-srv/Solvix
 
